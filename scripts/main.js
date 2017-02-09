@@ -4,17 +4,18 @@ const hangmanModule = (function() {
 const wordDisplay = document.querySelector('.display-random-word');
 const letterGuess = document.querySelector('.keyboard');
 let wordsArray = null;
+let userGuesses = [];
+let randWord = '';
+let guess = "";
 
 
   function displayLetterBorders (palabraRandom) {
-    console.log(palabraRandom);
     for (let i=0; i<palabraRandom; i++) {
       let newLetterDiv = document.createElement('DIV');
       wordDisplay.appendChild(newLetterDiv);
-      newLetterDiv.className = 'new-letter';
+      newLetterDiv.className = `new-letter  a${i}`;
       console.log('running-loop');
     }
-
   }
 
 
@@ -34,36 +35,38 @@ let wordsArray = null;
     http.send();
   }
 
-  function randomWordSelect(arrayDePalabras) {
+  function randomWordSelect(arg1) {
     let randNum = Math.floor(Math.random()*100);
-    let randWord = arrayDePalabras[randNum].content;
+    randWord = arg1[randNum].content;
     let randWordLength = randWord.length;
-    console.log(randWord);
     displayLetterBorders(randWordLength);
-    lookForLetterMatch(randWord);
+    console.log(randWord);
   }
 
   function bindKeyboard() {
     letterGuess.addEventListener('click', (event) => {
       if (event.target && event.target.matches ("li.char")) {
         console.log( event.target.textContent + " "  +  "was clicked!");
-        let guess = event.target.textContent;
-        console.log(guess);
+        guess = event.target.textContent;
+        userGuesses.push(guess);
+        lookForLetterMatch();
 	      }
     });
   }
 
-  function lookForLetterMatch(wordBeenRamdonized) {
-    let str = wordBeenRamdonized;
-    let count = 0;
-    let pos = str.indexOf("a");
-    while (pos !== -1) {
-      count++;
-      pos = str.indexOf("a", pos + 1);
+  function lookForLetterMatch() {
+    let randWordArray = randWord.split('');
+    let resultsArray = [];
+    for (let i = 0; i < randWordArray.length; i++) {
+        if (guess === randWordArray[i]) {
+          resultsArray.push(guess);
+          let guessLocation = randWordArray.indexOf(guess);
+          let displayGuess = document.querySelector(`.a${guessLocation}`);
+          console.log(randWord, guessLocation, displayGuess);
+          displayGuess.innerHTML = guess;
+      }
     }
-    console.log(pos);
   }
-
 
 
   function countGuessesRemaining(){
